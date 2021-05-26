@@ -16,3 +16,7 @@ client_scripts {
     'client/entityiter.lua'
 }
 
+--------------------------------------
+-------Customized by TutoHacks--------
+-----https://github.com/TutoHacks-----
+--------------------------------------
