@@ -6,11 +6,18 @@
 Config = {}
 
 Config = {
+    Webhook = "your discord webhook"
+    -- https://www.socialoomph.com/help/view/help_discord_webhook_how/
+
     commandName = "delallveh",
     -- This is the command that you will type into chat to execute the script.
 
-    restricCommand = true
-    -- Setting this to false will allow anyone in the server to use the command. 
-    -- If you set it to true you will need to add a ace perm to allow people to use it.
-    -- Such as add_ace [GROUP] command.[commandName] allow
+    announceevent = "rsb_broadcoast:announce"
+    -- this is your custom announce event.
+    -- get this from your announce script like: rsb_broadcoast
 }
+
+--------------------------------------
+-------Customized by TutoHacks--------
+-----https://github.com/TutoHacks-----
+--------------------------------------
