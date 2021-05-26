@@ -3,32 +3,46 @@
 --https://github.com/Whit3XLightning--
 --------------------------------------
 
-local ESX = nil
-TriggerEvent('esx:getSharedObject', function(obj) ESX = obj  end)
+ESX = nil
 
-ESX.RegisterServerCallback('tutohacks:welcheRolle', function(source, cb)
-    local xPlayer = ESX.GetPlayerFromId(source)
-    cb(xPlayer.getGroup())
+Citizen.CreateThread(function()
+    while ESX == nil do
+        TriggerEvent('esx:getSharedObject', function(obj) ESX = obj end)
+        Citizen.Wait(0)
+    end
 end)
 
-function sendToDiscord(title, message, footer)
-	local embed = {
-		  {
-			  ["color"] = "#f50014",
-			  ["title"] = "**".. title .."**",
-			  ["description"] = message,
-			  ["footer"] = {
-			  ["text"] = footer,
-			  },
-		  }
-	  }  
-	PerformHttpRequest(Config.Webhook, function(err, text, headers) end, 'POST', json.encode({username = "Discord Logs", embeds = embed}), { ['Content-Type'] = 'application/json' })
-end
+-- register client event: delete all cars
 
-RegisterServerEvent("wld:sendtoDiscord")
-AddEventHandler("wld:sendtoDiscord", function(titleembed, messagembed, footerembed)
-    sendToDiscord(titleembed, messagembed, footerembed)
+RegisterNetEvent("wld:delallveh")
+AddEventHandler("wld:delallveh", function ()
+    local totalvehc = 0
+    local notdelvehc = 0
+
+    for vehicle in EnumerateVehicles() do
+        if (not IsPedAPlayer(GetPedInVehicleSeat(vehicle, -1))) then SetVehicleHasBeenOwnedByPlayer(vehicle, false) SetEntityAsMissionEntity(vehicle, false, false) DeleteVehicle(vehicle)
+            if (DoesEntityExist(vehicle)) then DeleteVehicle(vehicle) end
+            if (DoesEntityExist(vehicle)) then notdelvehc = notdelvehc + 1 end
+        end
+        totalvehc = totalvehc + 1 
+    end
+    local vehfrac = totalvehc - notdelvehc .. " / " .. totalvehc
 end)
+
+-- register the command
+
+RegisterCommand(Config.commandName, function(source, args, rawCommand) 
+    ESX.TriggerServerCallback('tutohacks:welcheRolle', function(group) -- get the player group
+        if group == "superadmin" then
+            TriggerEvent("wld:delallveh", -1) -- trigger the client event
+            TriggerEvent(Config.announceevent, "All Vehicles got deleted!")
+            TriggerEvent('notifications', "#f50014", "Delete Vehicles", "You deleted all Vehicles!")
+            TriggerServerEvent("wld:sendtoDiscord", "Delete all Vehicles successfully", "**Admin:** "..GetPlayerName(source).." ["..source"]", "wld_clearveh by Whit3Xlightning & TutoHacks")
+        else
+            TriggerEvent('notifications', "#f50014", "No Permissions", "You don't have the perms to delete all vehicles!")
+        end
+    end)
+end, false)
 
 --------------------------------------
 -------Customized by TutoHacks--------
